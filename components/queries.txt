@@ -1,0 +1,7 @@
+*[_type=="exercise" ]{
+  _id, time, videoId, title, 
+    "category_1": category_1->_rev,
+    "category_2": category_2->_rev
+}
+
+*[_type=="exercise" && title match "Se*"]
