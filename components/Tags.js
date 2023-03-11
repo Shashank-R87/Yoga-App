@@ -10,7 +10,7 @@ const Tags = ({text, rev}) => {
     fetch("https://kdx9q0wc.api.sanity.io/v2021-10-21/data/query/production?query=*%5B_type%3D%3D%22exercise%22%5D%7B%0A%20%20_id%2C%20title%2C%20videoId%2C%20time%2C%0A%20%20%22category_1%22%3Acategory_1-%3E_rev%2C%0A%20%20%22category_2%22%3Acategory_2-%3E_rev%2C%0A%20%20%22categoryTime%22%3AcategoryTime-%3E_rev%0A%7D%0A")
     .then((data) => data.json())
     .then((result) => {
-      navigation.navigate("SearchScreen",{data:result.result, rev : rev});
+      navigation.navigate("SearchScreen",{data:result.result, rev : rev, text: text});
     })
     .catch((error)=>{
       alert(error)
