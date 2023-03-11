@@ -11,6 +11,10 @@ import CategoryScreen from './screens/CategoryScreen';
 import VideoScreen from './components/VideoScreen';
 import Empty from './screens/Empty';
 import SearchScreen from './screens/SearchScreen';
+import InitialScreen from './screens/InitialScreen';
+import Question_1 from './components/Question_1';
+import Question_2 from './components/Question_2';
+import Question_3 from './components/Question_3';
 
 const Stack = createNativeStackNavigator();
 
@@ -36,9 +40,13 @@ export default function App() {
     <TailwindProvider>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen options={opt} name="Empty" component={Empty} />
+          <Stack.Screen options={opt} name="Initial" component={InitialScreen} />
           <Stack.Screen options={opt} name="Login" component={LoginScreen} />
           <Stack.Screen options={opt} name="Register" component={RegisterScreen} />
+          <Stack.Screen options={opt} name="Empty" component={Empty} />
+          <Stack.Screen options={opt} name="First" component={Question_1} />
+          <Stack.Screen options={opt} name="Second" component={Question_2} />
+          <Stack.Screen options={opt} name="Third" component={Question_3} />
         </Stack.Navigator>
       </NavigationContainer>
     </TailwindProvider>

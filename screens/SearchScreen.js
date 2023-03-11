@@ -1,5 +1,5 @@
 import { View, Text, Image, ScrollView, Dimensions } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Animatable from 'react-native-animatable'
 import SearchCards from '../components/SearchCards'
@@ -11,19 +11,20 @@ const SearchScreen = () => {
     const route = useRoute()
     windowWidth = Dimensions.get("window").width;
 
+    const [isloading, setisloading] = useState(true)
+
     const data = route.params.data;
     var req_data = [];
-    console.log(data)
 
-    try{
+    try {
         const key = route.params.rev;
-        for(let i = 0; i<data.length;i++){
-            if ((data[i].category_1 == key)||(data[i].category_2==key)||(data[i].categoryTime==key)){
+        for (let i = 0; i < data.length; i++) {
+            if ((data[i].category_1 == key) || (data[i].category_2 == key) || (data[i].categoryTime == key)) {
                 req_data.push(data[i]);
             }
         }
     }
-    catch(e){
+    catch (e) {
         console.log(e)
     }
 
@@ -37,11 +38,12 @@ const SearchScreen = () => {
                 <Animatable.Text animation="fadeInLeft" duration={1000} style={{ paddingVertical: 6, paddingHorizontal: 15, fontFamily: "PoppinsSemiBold" }} className="bg-white rounded-[10px] text-[#3A3A3A] text-[14px] leading-[21px]">{route.params.text}</Animatable.Text>
             </View>
 
-            <ScrollView style={{ width: windowWidth }} className="mt-[62px] mb-[10px]">{
-                req_data==[] ? 
-                    data.map(item => <SearchCards time={item.time} title={item.title} videoId={item.videoId} key={item._id}/>) :
-                    req_data.map(item => <SearchCards time={item.time} title={item.title} videoId={item.videoId} key={item._id}/>)
-            }
+            <ScrollView style={{ width: windowWidth }} className="mt-[62px] mb-[10px]">
+                {
+                    req_data.length == 0 ?
+                        data.map(item => <SearchCards time={item.time} title={item.title} videoId={item.videoId} key={item._id} />) :
+                        req_data.map(item => <SearchCards time={item.time} title={item.title} videoId={item.videoId} key={item._id} />)
+                }
             </ScrollView>
 
             <View className="absolute bottom-[-2px] -z-10">

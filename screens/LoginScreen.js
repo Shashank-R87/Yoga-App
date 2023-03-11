@@ -4,9 +4,25 @@ import { auth } from "../firebase"
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/core'
 import * as Animatable from 'react-native-animatable'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
+import { StatusBar } from 'expo-status-bar'
 
 const LoginScreen = () => {
+
+    async function storeUserdetails(email, username) {
+        await SecureStore.setItemAsync("username", username);
+        await SecureStore.setItemAsync("email", email);
+        await SecureStore.setItemAsync("loggedin", "true");
+    }
+
+    async function checkloggedin() {
+        let loggedin = await SecureStore.getItemAsync("loggedin");
+        if (loggedin === "true") {
+            navigation.replace("Empty")
+        }
+    }
+
+    checkloggedin();
 
     const navigation = useNavigation()
 
@@ -30,25 +46,28 @@ const LoginScreen = () => {
         };
     }, []);
 
+    const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
-    useEffect(() => {
-        const check = auth.onAuthStateChanged(user => {
-            if (user) {
-                navigation.replace("Home")
-            }
-        })
+    // useEffect(() => {
+    //     const check = auth.onAuthStateChanged(user => {
+    //         if (user) {
+    //             navigation.replace("Home")
+    //         }
+    //     })
 
-        return check
-    }, [])
-    
+    //     return check
+    // }, [])
+
     const handleSignIn = () => {
         auth
             .signInWithEmailAndPassword(email, password)
             .then(userCredentials => {
                 const user = userCredentials.user;
                 Keyboard.dismiss()
+                storeUserdetails(user.email, username);
+                navigation.replace("Initial");
             }).catch(error => {
                 if (error.code === 'auth/invalid-email') {
                     Alert.alert("Email", "Email entered is invalid", [{ text: "Ok" }])
@@ -60,6 +79,8 @@ const LoginScreen = () => {
                     Alert.alert("No User", "No user with email", [{ text: "Ok" }])
                 } else if (error.code === 'auth/too-many-requests') {
                     Alert.alert("Too many requests", "Account had been temporarily disabled due to many failed login attempts. You can immediatly restore it by resetting your password or you can try again later", [{ text: "Ok" }])
+                } else if (error.code === 'auth/network-request-failed') {
+                    Alert.alert("Network", "Please connect to a network", [{ text: "Ok" }])
                 } else {
                     alert(error.message)
                 }
@@ -91,10 +112,13 @@ const LoginScreen = () => {
 
             <KeyboardAvoidingView behavior='padding' className="justify-center items-center">
                 <View className="bg-[#3A3A3A] font-bold w-[320px] h-[51px] justify-center rounded-[10px] border-[#3A3A3A] border-2 focus:border-[#fff]">
-                    <TextInput inputMode='email' onFocus={() => { setShow(false) }} placeholderTextColor={"white"} className="text-white text-[16px]" style={{ paddingLeft: 20, paddingRight: 20, fontFamily: "PoppinsRegular" }} placeholder='Email' value={email} onChangeText={text => setEmail(text)} />
+                    <TextInput blurOnSubmit={false} returnKeyType='next' onSubmitEditing={() => { this.secondTextInput.focus(); }} onFocus={() => { setShow(false) }} placeholderTextColor={"white"} className="text-white text-[16px]" style={{ paddingLeft: 20, paddingRight: 20, fontFamily: "PoppinsRegular" }} placeholder='Username' value={username} onChangeText={text => setUsername(text)} />
                 </View>
                 <View className="bg-[#3A3A3A] font-bold w-[320px] mt-[15px] h-[51px] justify-center rounded-[10px] border-[#3A3A3A] border-2 focus:border-[#fff]">
-                    <TextInput secureTextEntry onFocus={() => { setShow(false) }} placeholderTextColor={"white"} className="text-white text-[16px]" style={{ paddingLeft: 20, paddingRight: 20, fontFamily: "PoppinsRegular" }} placeholder='Password' value={password} onChangeText={text => setPassword(text)} />
+                    <TextInput blurOnSubmit={false} returnKeyType='next' ref={(input) => { this.secondTextInput = input; }} onSubmitEditing={() => { this.thirdTextInput.focus(); }} inputMode='email' onFocus={() => { setShow(false) }} placeholderTextColor={"white"} className="text-white text-[16px]" style={{ paddingLeft: 20, paddingRight: 20, fontFamily: "PoppinsRegular" }} placeholder='Email' value={email} onChangeText={text => setEmail(text)} />
+                </View>
+                <View className="bg-[#3A3A3A] font-bold w-[320px] mt-[15px] h-[51px] justify-center rounded-[10px] border-[#3A3A3A] border-2 focus:border-[#fff]">
+                    <TextInput returnKeyType='done' ref={(input) => { this.thirdTextInput = input; }} secureTextEntry onFocus={() => { setShow(false) }} placeholderTextColor={"white"} className="text-white text-[16px]" style={{ paddingLeft: 20, paddingRight: 20, fontFamily: "PoppinsRegular" }} placeholder='Password' value={password} onChangeText={text => setPassword(text)} />
                 </View>
                 <TouchableOpacity onPress={handleSignIn} activeOpacity={0.5} className="w-[160px] mt-[30px] justify-center items-center rounded-md h-[51px] bg-[#3A3A3A]">
                     <Text style={{ fontFamily: "PoppinsRegular" }} className="text-[16px] text-[#fff]">Login</Text>
@@ -113,6 +137,9 @@ const LoginScreen = () => {
                     <Text style={{ fontFamily: "PoppinsSemiBold" }} className="text-[17px] text-[#fff] underline">Create one</Text>
                 </Pressable>
             </View>
+
+            <StatusBar style='light' />
+
         </SafeAreaView>
     )
 }
