@@ -2,10 +2,6 @@ import { View, Text, TouchableOpacity, Image, ImageBackground, TextInput, Scroll
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Animatable from 'react-native-animatable'
-import { auth } from '../firebase'
-import { useNavigation } from '@react-navigation/core'
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Tabs from "../components/Tabs"
 import CategoriesCard from '../components/CategoriesCard'
 import MainCard from '../components/MainCard'
 import { StatusBar } from 'expo-status-bar';

@@ -40,9 +40,10 @@ function MyTabs() {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      tabBarOptions={{
-        activeTintColor: '#3a3a3a',
-        showLabel: false
+      screenOptions={{
+        tabBarActiveTintColor: '#3a3a3a',
+        tabBarShowLabel: false,
+        headerShown:false,
       }}
     >
       <Tab.Screen
